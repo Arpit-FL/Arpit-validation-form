@@ -8,6 +8,17 @@
   width: 60vw;
   flex-direction: column;
 }
+.uploadButton {
+  width: 150px;
+  height: 28px;
+  border-radius: 6px;
+  background-color: white;
+  outline: #023364 solid 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #023364;
+}
 
 .required_fields {
   color: red;
@@ -21,5 +32,30 @@
 @media screen and (max-width: 390px) {
   .agreementBox {
     margin-bottom: 100px;
+  }
+  .uploadButton {
+    width: 350px;
+    height: 28px;
+    border-radius: 6px;
+    background-color: white;
+    outline: #023364 solid 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #023364;
+  }
+}
+@media screen and (max-width: 320px) {
+  .uploadButton {
+    width: 550px;
+    height: 28px;
+    border-radius: 6px;
+    background-color: white;
+    outline: #023364 solid 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #023364;
+    font-size: 11px;
   }
 }

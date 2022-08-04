@@ -13,6 +13,18 @@ import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const fnameRef = useRef();
+  const lnameRef = useRef();
+  const emailRef = useRef();
+  const phoneRef = useRef();
+  const locationRef = useRef();
+  const stateRef = useRef();
+  const cityRef = useRef();
+  const languageRef = useRef();
+  const skillsRef = useRef();
+  const checkBoxRef = useRef();
+  const organisationRef = useRef();
+  const requesterRef = useRef();
+  const radioBoxRef = useRef();
   const navigate = useNavigate();
   //Drop down array for state..............
   const [state, setState] = useState([]);
@@ -31,6 +43,8 @@ const Home = () => {
 
   const [data, setData] = useState([]);
 
+  console.log(selectedLanguage);
+
   const handleSelectLanguage = () => {
     setData((prevState) => {
       return [
@@ -45,14 +59,19 @@ const Home = () => {
     const filter_lang = lang.filter((lang) => lang.lang !== selectedLanguage);
     setLang(filter_lang);
     setCloseModal(false);
+    setProficiency("");
   };
 
   const language = [
     { id: 1, lang: "Hindi" },
     { id: 2, lang: "English" },
     { id: 3, lang: "Spanish" },
-    { id: 4, lang: "Chinies" },
+    { id: 4, lang: "Chinese" },
   ];
+
+  const [frictionalVal, setFrictionalVal] = useState(false);
+
+  console.log({ frictionalVal });
 
   const [lang, setLang] = useState(language);
 
@@ -61,6 +80,7 @@ const Home = () => {
     setSelectedLanguageValidation(false);
     const selectedLang = e.target.value;
     setSelectedLanguage(selectedLang);
+
     const language = lang.find((lang) => lang.lang === selectedLang);
     language && setCloseModal(true);
   };
@@ -76,6 +96,7 @@ const Home = () => {
       return data.id !== id;
     });
     setData(updatedData);
+    setSelectedLanguage("");
   };
   // console.log({ data });
 
@@ -94,9 +115,10 @@ const Home = () => {
     currentLocationValidation: false,
   });
 
-  const [condition, setCondition] = useState(true);
+  const [condition, setCondition] = useState(false);
 
   const [fnameValidation, setFnameValidation] = useState(true);
+  const [radioBoxValidation, setRadioBoxValidation] = useState(true);
   const [lnameValidation, setLnameValidation] = useState(true);
   const [emailValidation, setEmailValidation] = useState(true);
   const [phoneValidation, setPhoneValidation] = useState(true);
@@ -106,6 +128,7 @@ const Home = () => {
   const [selectedLanguageValidation, setSelectedLanguageValidation] =
     useState(false);
   const [selectedSkillValidation, setSelectedSkillValidation] = useState(false);
+  const [checkBOxValidation, setCheckBOxValidation] = useState(true);
   const [currentLocationValidation, setCurrentLocationValidation] =
     useState(true);
   const [requesterNameValidation, setRequesterNameValidation] = useState(true);
@@ -126,6 +149,8 @@ const Home = () => {
     setState(states);
   }, []);
 
+  // const [selectedCityValue, setSelectedCityValue] = useState("")
+
   const handleState = (id) => {
     setSelectedState(id);
     setStateValidation(false);
@@ -135,6 +160,8 @@ const Home = () => {
 
   const handleCity = (id) => {
     setSelectedCity(id);
+    const selectedCity = cities.find((city) => city.id === id).name;
+    console.log("seletedCity", selectedCity);
     setCityValidation(false);
   };
   const states = [
@@ -183,11 +210,17 @@ const Home = () => {
     { id: "20", statesId: "4", name: "Ghaziabad" },
   ];
 
+  // console.log("called");
+  // useEffect(() => {
+  //   setSelectedLanguage("Please Select Language");
+  //   console.log("arpit");
+  // }, [selectedLanguage]);
+
   const skillArray = [
     { id: 14134134, skill: "React Js" },
     { id: 14134135, skill: "Node Js" },
     { id: 14134136, skill: "Mongo DB" },
-    { id: 14134137, skill: "Expree Js" },
+    { id: 14134137, skill: "Express Js" },
     { id: 14134138, skill: "Angular Js" },
   ];
   const [skillList, setSkillList] = useState(skillArray);
@@ -208,9 +241,9 @@ const Home = () => {
   };
 
   const skillRemoveHandler = (id) => {
-    console.log({ id });
+    // console.log({ id });
     const addSkillToArray = skillArray.filter((skill) => skill.id === id);
-    console.log({ addSkillToArray });
+    // console.log({ addSkillToArray });
     setSkillList((prevState) => [...prevState, addSkillToArray[0]]);
     const updatedSkill = skill.filter((skill) => {
       return skill.id !== id;
@@ -220,45 +253,139 @@ const Home = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    !condition && setRadioBoxValidation(false);
+
+    ((show && !organisationName) || (show && !organizationNameValidation)) &&
+      setOrganizationNameValidation(false);
+
+    show && !requesterName && setRequesterNameValidation(false);
+
+    (!fname || !fnameValidation) && setFnameValidation(false);
+    (!lname || !lnameValidation) && setLnameValidation(false);
+    (!email || !emailValidation) && setEmailValidation(false);
+
+    (!phone || phone.length !== 10 || !phoneValidation) &&
+      setPhoneValidation(false);
+
+    (!currentLocation || !currentLocationValidation) &&
+      setCurrentLocationValidation(false);
+
+    !selectedState && setStateValidation(true);
+    !selectedCity && setCityValidation(true);
+
+    data.length === 0 && setSelectedLanguageValidation(true);
+    skill.length === 0 && setSelectedSkillValidation(true);
+    !agreement && setCheckBOxValidation(false);
 
     if (!condition) {
-      return alert("Please select Are you behalf of some one else?");
-    } else if (show && !organisationName) {
+      setTimeout(() => {
+        return alert(
+          "Please let us know, are you applying on behalf of someone else?"
+        );
+      }, 500);
+      radioBoxRef.current.focus().scrollIntoView();
+    } else if (
+      (show && !organisationName) ||
+      (show && !organizationNameValidation)
+    ) {
+      //
+      let errorMsg = "Enter valid organisation";
+      if (!organisationName) {
+        errorMsg = "Please enter organisation name";
+      }
+      //
+      setTimeout(() => {
+        return alert(errorMsg); ///Change//
+      }, 500);
+      organisationRef.current.focus().scrollIntoView();
       setOrganizationNameValidation(false);
-      return alert("Please Enter Organisation Name");
-    } else if (show && !requesterName) {
+      //
+    } else if ((show && !requesterName) || (show && !requesterNameValidation)) {
+      let errorMsg = "Enter valid Requester Name";
+      if (!requesterName) {
+        errorMsg = "Please enter requester name";
+      }
+      setTimeout(() => {
+        return alert(errorMsg);
+      }, 500);
+      requesterRef.current.focus().scrollIntoView();
       setRequesterNameValidation(false);
-      return alert("Please Enter Requester Name");
-    } else if (!fname) {
-      console.log(fnameRef.current);
-      setFnameValidation(false);
-      return alert("Please Enter First Name");
-    } else if (!lname) {
+      //
+    } else if (!fname || !fnameValidation) {
+      let errorMsg = "Invalid First First Name";
+      if (!fname) {
+        errorMsg = "Please enter first name";
+      }
+      setTimeout(() => {
+        alert(errorMsg);
+      }, 500);
+      fnameRef.current.focus().scrollIntoView();
+    } else if (!lname || !lnameValidation) {
+      let errorMsg = "Invalid Last Name";
+      if (!lname) {
+        errorMsg = "Please enter last name";
+      }
+      setTimeout(() => {
+        return alert(errorMsg);
+      }, 500);
+      lnameRef.current.focus().scrollIntoView();
       setLnameValidation(false);
-      return alert("Please Enter Last Name");
-    } else if (!email) {
+    } else if (!email || !emailValidation) {
+      let errorMsg = "Invalid Email";
+      if (!email) {
+        errorMsg = "Please enter email";
+      }
+      setTimeout(() => {
+        return alert(errorMsg);
+      }, 500);
+      emailRef.current.focus().scrollIntoView();
       setEmailValidation(false);
-      return alert("Please Enter Email");
-    } else if (!phone || phone.length !== 10) {
+    } else if (!phone || phone.length !== 10 || !phoneValidation) {
+      let errorMsg = "Invalid Phone No.";
+      if (!phone) {
+        errorMsg = "Please enter phone no.";
+      }
+      setTimeout(() => {
+        return alert(errorMsg);
+      }, 500);
+      phoneRef.current.focus().scrollIntoView();
       setPhoneValidation(false);
-      return alert("Please Enter Phone Number Correctly");
-    } else if (!currentLocation) {
+    } else if (!currentLocation || !currentLocationValidation) {
+      setTimeout(() => {
+        return alert("Please Enter Current Location");
+      }, 500);
+      locationRef.current.focus().scrollIntoView();
       setCurrentLocationValidation(false);
-      return alert("Please Enter Current Location");
     } else if (!selectedState) {
+      setTimeout(() => {
+        return alert("Please select state");
+      }, 500);
+      stateRef.current.focus().scrollIntoView();
       setStateValidation(true);
-      return alert("Please select state");
     } else if (!selectedCity) {
+      setTimeout(() => {
+        return alert("Please select City");
+      }, 500);
+      cityRef.current.focus().scrollIntoView();
       setCityValidation(true);
-      return alert("Please select City");
     } else if (data.length === 0) {
+      setTimeout(() => {
+        return alert("Please Select Language");
+      }, 500);
+      languageRef.current.focus().scrollIntoView();
       setSelectedLanguageValidation(true);
-      return alert("Please Select Language");
     } else if (skill.length === 0) {
+      setTimeout(() => {
+        return alert("Please select Skill");
+      }, 500);
+      skillsRef.current.focus().scrollIntoView();
       setSelectedSkillValidation(true);
-      return alert("Please select Skill");
     } else if (!agreement) {
-      return alert("Please select Agreement");
+      setTimeout(() => {
+        return alert("Please select Agreement");
+      }, 500);
+      checkBoxRef.current.focus().scrollIntoView();
+      // setCheckBOxValidation(false);
     } else {
       setSpinner(true);
 
@@ -273,76 +400,91 @@ const Home = () => {
     setInputval((prevState) => {
       return { ...prevState, [name]: value };
     });
-    name === "fname" && fname && setFnameValidation(/^[a-z- ]+$/i.test(value));
-    name === "lname" && lname && setLnameValidation(/^[a-z- ]+$/i.test(value));
+    name === "fname" && fname && setFnameValidation(/^[a-z-]+$/i.test(value));
+    name === "lname" && lname && setLnameValidation(/^[a-z-]+$/i.test(value));
     name === "email" &&
       email &&
       setEmailValidation(
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/i.test(value)
       );
-    name === "phone" && phone && setPhoneValidation(/^[0-9 ]+$/i.test(value));
+    name === "phone" && phone && setPhoneValidation(/^[0-9]{10}$/i.test(value));
     name === "organisationName" &&
       organisationName &&
-      setOrganizationNameValidation(/^[a-z- ]+$/i.test(value));
+      setOrganizationNameValidation(/^[a-z-]+$/i.test(value));
     name === "requesterName" &&
       requesterName &&
-      setRequesterNameValidation(/^[a-z- ]+$/i.test(value));
+      setRequesterNameValidation(/^[a-z-]+$/i.test(value));
     name === "currentLocation" &&
       currentLocation &&
-      setCurrentLocationValidation(/^[a-z- ]+$/i.test(value));
+      setCurrentLocationValidation(
+        /^[A-Z0-9 _]*[A-Z0-9][A-Z0-9 _]*$/i.test(value)
+      );
   };
 
   const handleAgreement = () => {
     setAgreement(!agreement);
+    setCheckBOxValidation(true);
   };
-  console.log({ agreement });
+  // console.log({ agreement });
 
   const [UploadResume, setUploadResume] = useState("");
 
   const handleResumeOnchangeHandler = (e) => {
     setUploadResume(e.target.value);
   };
-  console.log({ UploadResume: UploadResume?.split("\\").splice(-1) });
+
+  const emptySelectedLanguage = () => {
+    setSelectedLanguage("");
+  };
+
+  // console.log({ UploadResume: UploadResume?.split("\\").splice(-1) });
   return (
     <div className="main_container">
       {/* ////////////////////////////////////////////////////////////////////////////// */}
       <NavBar />
       <div className="main-heading">
         <div className="form-container">
-          <h6>Please enter your information</h6>
+          <h6 className="mb-3">Please enter your information</h6>
           <p>
-            <span className="required_fields">*</span>Required Fields
+            <span className="required_fields">*</span>Required fields
           </p>
-          <h6>
-            Are you behalf of some one else?
+          <h6 className="mt-3">
+            Are you applying on behalf of some one else?
             <span className="required_fields">*</span>
           </h6>
           <Form>
             {["radio"].map((type) => (
               <div key={`reverse-${type}`} className="mb-3">
                 <Form.Check
+                  // className={`${!condition ? "radioBox_style" : ""}`}
+                  className={`${!radioBoxValidation ? "ouline_style" : ""}`}
+                  onClick={() => {
+                    setShow(true);
+                    setCondition(true);
+                    setRadioBoxValidation(true);
+                  }}
+                  label="yes"
+                  name="group1"
+                  type={type}
+                  id={`reverse-${type}-2`}
+                  ref={radioBoxRef}
+                />
+                <Form.Check
+                  className={`${!radioBoxValidation ? "ouline_style" : ""}`}
                   onClick={() => {
                     setShow(false);
-                    setCondition(false);
+                    setCondition(true);
+                    setRadioBoxValidation(true);
                   }}
-                  label="No"
+                  label="no"
                   name="group1"
                   type={type}
                   id={`reverse-${type}-1`}
                 />
-                <Form.Check
-                  onClick={() => {
-                    setShow(true);
-                    setCondition(false);
-                  }}
-                  label="Yes"
-                  name="group1"
-                  type={type}
-                  id={`reverse-${type}-2`}
-                />
               </div>
             ))}
           </Form>
+
           {show ? (
             <Form>
               <Form.Group
@@ -350,7 +492,9 @@ const Home = () => {
                 controlId="exampleForm.ControlInput1"
               >
                 <Form.Label>
-                  Organisation Name:<span className="required_fields">*</span>
+                  <h6>
+                    Organisation Name<span className="required_fields">*</span>
+                  </h6>
                 </Form.Label>
                 <Form.Control
                   name="organisationName"
@@ -363,6 +507,7 @@ const Home = () => {
                   }
                   type="text"
                   placeholder="Enter First Name"
+                  ref={organisationRef}
                 />
               </Form.Group>
             </Form>
@@ -374,8 +519,9 @@ const Home = () => {
                 controlId="exampleForm.ControlInput1"
               >
                 <Form.Label>
-                  Requester Name:
-                  <span className="required_fields">*</span>
+                  <h6>
+                    Requester Name<span className="required_fields">*</span>
+                  </h6>
                 </Form.Label>
                 <Form.Control
                   name="requesterName"
@@ -388,6 +534,7 @@ const Home = () => {
                   }
                   type="email"
                   placeholder="Enter requester Name "
+                  ref={requesterRef}
                 />
               </Form.Group>
             </Form>
@@ -396,7 +543,9 @@ const Home = () => {
           <Form>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>
-                First Name:<span className="required_fields">*</span>
+                <h6>
+                  First Name<span className="required_fields">*</span>
+                </h6>
               </Form.Label>
               <Form.Control
                 className={`${!fnameValidation ? "ouline_style" : ""}`}
@@ -414,7 +563,9 @@ const Home = () => {
             {/* onChange={getInputData} */}
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>
-                Last Name:<span className="required_fields">*</span>
+                <h6>
+                  Last Name<span className="required_fields">*</span>
+                </h6>
               </Form.Label>
               <Form.Control
                 name="lname"
@@ -423,6 +574,7 @@ const Home = () => {
                 onChange={(e) => validationFunction("lname", e.target.value)}
                 type="email"
                 placeholder="Enter Last Name"
+                ref={lnameRef}
               />
             </Form.Group>
           </Form>
@@ -431,7 +583,9 @@ const Home = () => {
             {/* onChange={getInputData} */}
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>
-                Email:<span className="required_fields">*</span>
+                <h6>
+                  Email<span className="required_fields">*</span>
+                </h6>
               </Form.Label>
               <Form.Control
                 name="email"
@@ -440,6 +594,7 @@ const Home = () => {
                 onChange={(e) => validationFunction("email", e.target.value)}
                 type="email"
                 placeholder="Enter Email"
+                ref={emailRef}
               />
             </Form.Group>
           </Form>
@@ -448,7 +603,9 @@ const Home = () => {
             {/* onChange={getInputData} */}
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>
-                Phone No.<span className="required_fields">*</span>
+                <h6>
+                  Phone Number<span className="required_fields">*</span>
+                </h6>
               </Form.Label>
               <Form.Control
                 name="phone"
@@ -457,13 +614,16 @@ const Home = () => {
                 onChange={(e) => validationFunction("phone", e.target.value)}
                 type="phone"
                 placeholder="Enter Phone No"
+                ref={phoneRef}
               />
             </Form.Group>
           </Form>
 
           <>
             <Form.Label>
-              Current Location<span className="required_fields">*</span>
+              <h6>
+                Current Location<span className="required_fields">*</span>
+              </h6>
             </Form.Label>
             <InputGroup className="mb-3" controlId="exampleForm.ControlInput1">
               {/* onChange={getInputData} */}
@@ -481,14 +641,18 @@ const Home = () => {
                   validationFunction("currentLocation", e.target.value)
                 }
                 type="currentLocation"
+                ref={locationRef}
               />
             </InputGroup>
 
             {/* ...........Select State Drop Down............. */}
             <Form.Label>
-              State<span className="required_fields">*</span>
+              <h6>
+                State<span className="required_fields">*</span>
+              </h6>
             </Form.Label>
             <select
+              ref={stateRef}
               className={`form-control ${
                 stateValidation ? "ouline_style" : ""
               }`}
@@ -496,7 +660,9 @@ const Home = () => {
                 handleState(e.target.value);
               }}
             >
-              <option value="0">Select State</option>
+              <option value="0" style={{ display: "none" }}>
+                Select State
+              </option>
               {state && state !== undefined
                 ? state.map((statobj, index) => {
                     return (
@@ -510,11 +676,15 @@ const Home = () => {
 
             {/* ...........Select State Drop Down............. */}
 
-            <Form.Label style={{ marginTop: "5px" }}>
-              City<span className="required_fields">*</span>
+            <Form.Label className="mt-3" style={{ marginTop: "5px" }}>
+              <h6>
+                City<span className="required_fields mt-3">*</span>
+              </h6>
             </Form.Label>
 
             <select
+              ref={cityRef}
+              // value={}
               className={`form-control ${cityValidation ? "ouline_style" : ""}`}
               onChange={(e) => {
                 handleCity(e.target.value);
@@ -532,18 +702,26 @@ const Home = () => {
                 : "No City"}
             </select>
 
-            <Form.Label style={{ marginTop: "5px" }}>
-              Language<span className="required_fields">*</span>
+            <Form.Label className="mt-3" style={{ marginTop: "5px" }}>
+              <h6>
+                Language <Form.Text muted>(Select all that apply)</Form.Text>
+                <span className="required_fields">*</span>
+              </h6>
             </Form.Label>
             <select
+              ref={languageRef}
+              value={selectedLanguage}
               className={`form-control ${
                 selectedLanguageValidation ? "ouline_style" : ""
               }`}
+              defaultValue={"Please Select Value"}
               onChange={handleLanguageChange}
               name=""
               id=""
             >
-              <option value="">Please Select Language</option>
+              <option style={{ display: "none" }} value="">
+                Please Select Language
+              </option>
               {lang.map((lang) => (
                 <option value={lang.lang} key={lang.id}>
                   {lang.lang}
@@ -586,16 +764,23 @@ const Home = () => {
             {closeModel && (
               <LangSelect
                 closeModel={setCloseModal}
+                setSelectedLanguage={setSelectedLanguage}
                 setProficiency={setProficiency}
                 proficiency={proficiency}
                 handleSelectLanguage={handleSelectLanguage}
+                emptySelectedLanguage={emptySelectedLanguage}
+                selectedLanguage={selectedLanguage}
               />
             )}
 
-            <Form.Label style={{ marginTop: "8px" }}>
-              Skills<span className="required_fields">*</span>
+            <Form.Label className="mt-3" style={{ marginTop: "8px" }}>
+              <h6>
+                Skills <Form.Text muted>(Select all that apply)</Form.Text>
+                <span className="required_fields">*</span>
+              </h6>
             </Form.Label>
             <select
+              ref={skillsRef}
               className={`form-control ${
                 selectedSkillValidation ? "ouline_style" : ""
               }`}
@@ -612,11 +797,6 @@ const Home = () => {
                   {skill.skill}
                 </option>
               ))}
-              {/* <option value="React Js">React Js</option>
-              <option value="Node Js">Node Js</option>
-              <option value="MongoDB">MongoDB</option>
-              <option value="Express Js">Express Js</option>
-              <option value="Angular Js">Angular Js</option> */}
             </select>
             <div style={{ display: "flex", gap: "8px" }}>
               {skill.map((skill) => (
@@ -647,14 +827,21 @@ const Home = () => {
               ))}
             </div>
             {/* //////// */}
-            <Form.Label style={{ marginTop: "8px" }}>Mobility</Form.Label>
+            <Form.Label className="mt-3" style={{ marginTop: "8px" }}>
+              <h6>
+                Mobility
+                <span className="required_fields">*</span>
+              </h6>
+              <Form.Text muted>
+                Do you have access to reliable transportation?
+              </Form.Text>
+            </Form.Label>
             <select name="" id="" className="form-control">
               <option value="" style={{ display: "none" }}>
                 Select Mobility
               </option>
-              <option>A</option>
-              <option>B</option>
-              <option>C</option>
+              <option>Yes</option>
+              <option>No</option>
             </select>
 
             <div
@@ -667,7 +854,7 @@ const Home = () => {
                 marginBottom: "20px",
               }}
             >
-              <h5>Resume Upload</h5>
+              <h5>Resume Upload (*.pdf,*.doc)</h5>
               <input
                 onChange={(e) => handleResumeOnchangeHandler(e)}
                 type="file"
@@ -676,29 +863,15 @@ const Home = () => {
                 accept=".pdf,.doc"
                 style={{ display: "none" }}
               />
-              <label
-                for="files"
-                style={{
-                  width: "150px",
-                  height: "28px",
-                  borderRadius: "6px",
-                  backgroundColor: "white",
-                  outline: "#023364 solid 3px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#023364",
-                }}
-              >
+              <label for="files" className="uploadButton">
                 Upload File
               </label>
             </div>
             {UploadResume && (
               <div style={{ display: "flex" }}>
-                <input
-                  className="form-control"
-                  value={UploadResume?.split("\\").splice(-1)[0]}
-                />
+                <div className="form-control">
+                  {UploadResume?.split("\\").splice(-1)[0]}
+                </div>
                 <span>
                   <Button onClick={() => setUploadResume("")}>X</Button>
                 </span>
@@ -712,16 +885,26 @@ const Home = () => {
                 height: "40px",
                 gap: "5px",
               }}
-              className="agreementBox"
+              className={`form-control agreementBox ${
+                !checkBOxValidation ? "ouline_style" : ""
+              }`}
             >
-              <Form.Check onClick={handleAgreement} aria-label="option 1" />
+              <Form.Check
+                onClick={handleAgreement}
+                aria-label="option 1"
+                ref={checkBoxRef}
+              />
               <p>
-                I Agree To Share Above Personal Information In Compliance With
-                The
-                <a href="/"> Data and Privacy Policy</a>
+                I agree to share above personal information in compliance with
+                the
+                <a href="/">
+                  {" "}
+                  data and privacy policy
+                  <span className="required_fields">*</span>
+                </a>
               </p>
             </div>
-            <div className="btn_container">
+            <div className="btn_container mt-3">
               {spinner && <Spinner className="spinner_1" />}
               <Button
                 disabled={spinner}
@@ -729,14 +912,14 @@ const Home = () => {
                 variant="primary"
                 type="submit"
                 style={{
-                  width: "120px",
+                  width: "31vh",
                   justifySelf: "center",
                   alignSelf: "center",
                   marginTop: "15px",
                   marginBottom: "10px",
                 }}
               >
-                Submit
+                Submit Profile
               </Button>
             </div>
           </>

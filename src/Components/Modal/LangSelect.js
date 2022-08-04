@@ -10,13 +10,21 @@ function LangSelect(props) {
       >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <h3 style={{ alignSelf: "center" }}>Please Choose your language</h3>
-          <h3 style={{ alignSelf: "center" }}> Proficiency for {props.lang}</h3>
+          <h3 style={{ alignSelf: "center" }}>
+            {" "}
+            Proficiency for{" "}
+            <span style={{ color: "blue", fontSize: "30px" }}>
+              {props.selectedLanguage}
+            </span>
+          </h3>
         </div>
 
         <div
           onClick={() => {
             props.closeModel(false);
             props.setProficiency("");
+            props.setSelectedLanguage("");
+            props.setFrictionalVal(true);
           }}
           style={{
             alignSelf: "center",
@@ -140,14 +148,16 @@ function LangSelect(props) {
 
         <button
           onClick={props.handleSelectLanguage}
+          className={!props.proficiency ? "disabled_lang_btn" : "blue"}
           style={{
             width: "140px",
-            backgroundColor: "blue",
+            // backgroundColor: "blue",
             color: "white",
             border: "none",
             padding: "2px 4px",
             borderRadius: "8px",
           }}
+          disabled={!props.proficiency}
         >
           Add Language
         </button>
