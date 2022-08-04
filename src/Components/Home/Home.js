@@ -154,16 +154,17 @@ const Home = () => {
   const handleState = (id) => {
     setSelectedState(id);
     setStateValidation(false);
-    const data = cities.filter((cityArray) => cityArray.statesId === id);
+    const data = cities[id];
     setCity(data);
+    setSelectedCity("");
   };
 
   const handleCity = (id) => {
     setSelectedCity(id);
-    const selectedCity = cities.find((city) => city.id === id).name;
-    console.log("seletedCity", selectedCity);
     setCityValidation(false);
   };
+
+  console.log({ selectedCity });
   const states = [
     {
       id: "1",
@@ -184,31 +185,39 @@ const Home = () => {
   ];
 
   //Array for cities............................
-  const cities = [
-    { id: "1", statesId: "1", name: "Mumbai" },
-    { id: "2", statesId: "1", name: "Pune" },
-    { id: "3", statesId: "1", name: "Nagpur" },
-    { id: "4", statesId: "1", name: "Thane" },
-    { id: "5", statesId: "1", name: "Nashik" },
+  const cities = {
+    1: [
+      { id: "1", name: "Mumbai" },
+      { id: "2", name: "Pune" },
+      { id: "3", name: "Nagpur" },
+      { id: "4", name: "Thane" },
+      { id: "5", name: "Nashik" },
+    ],
 
-    { id: "6", statesId: "2", name: "Ratlam" },
-    { id: "7", statesId: "2", name: "Indore" },
-    { id: "8", statesId: "2", name: "Ujjain" },
-    { id: "9", statesId: "2", name: "Bhopal" },
-    { id: "10", statesId: "2", name: "Khandwa" },
+    2: [
+      { id: "6", name: "Ratlam" },
+      { id: "7", name: "Indore" },
+      { id: "8", name: "Ujjain" },
+      { id: "9", name: "Bhopal" },
+      { id: "10", name: "Khandwa" },
+    ],
 
-    { id: "11", statesId: "3", name: "Hyderabad" },
-    { id: "12", statesId: "3", name: "Nizamabad" },
-    { id: "13", statesId: "3", name: "Karim Nagar" },
-    { id: "14", statesId: "3", name: "Khammam" },
-    { id: "15", statesId: "3", name: "Mahabub Nagar" },
+    3: [
+      { id: "11", name: "Hyderabad" },
+      { id: "12", name: "Nizamabad" },
+      { id: "13", name: "Karim Nagar" },
+      { id: "14", name: "Khammam" },
+      { id: "15", name: "Mahabub Nagar" },
+    ],
 
-    { id: "16", statesId: "4", name: "Kanpur" },
-    { id: "17", statesId: "4", name: "Lucknow" },
-    { id: "18", statesId: "4", name: "Ayodhya" },
-    { id: "19", statesId: "4", name: "Gorakhpur" },
-    { id: "20", statesId: "4", name: "Ghaziabad" },
-  ];
+    4: [
+      { id: "16", name: "Kanpur" },
+      { id: "17", name: "Lucknow" },
+      { id: "18", name: "Ayodhya" },
+      { id: "19", name: "Gorakhpur" },
+      { id: "20", name: "Ghaziabad" },
+    ],
+  };
 
   // console.log("called");
   // useEffect(() => {
@@ -690,11 +699,11 @@ const Home = () => {
                 handleCity(e.target.value);
               }}
             >
-              <option value="0">Select City</option>
+              <option value="">Select City</option>
               {city && city !== undefined
                 ? city.map((statobj, index) => {
                     return (
-                      <option key={index} value={statobj.id}>
+                      <option key={statobj.id} value={statobj.name}>
                         {statobj.name}
                       </option>
                     );
@@ -828,10 +837,7 @@ const Home = () => {
             </div>
             {/* //////// */}
             <Form.Label className="mt-3" style={{ marginTop: "8px" }}>
-              <h6>
-                Mobility
-                <span className="required_fields">*</span>
-              </h6>
+              <h6>Mobility</h6>
               <Form.Text muted>
                 Do you have access to reliable transportation?
               </Form.Text>
